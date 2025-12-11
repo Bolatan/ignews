@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // API Configuration
-const API_URL = 'https://igbe-news-backend.vercel.app/api'; // Replace with your actual backend URL
+const API_URL = '/api'; // Use relative path for Vercel rewrites
 
 const categories = [
   'Breaking News', 'Local News', 'Politics', 'Business', 
