@@ -3,100 +3,145 @@ import {
   Newspaper, Menu, X, Search, TrendingUp, Clock, 
   MessageSquare, Share2, Bookmark, User, Bell,
   ChevronRight, Eye, Heart, MapPin, Calendar,
-  Facebook, Twitter, Linkedin, Instagram
+  Facebook, Twitter, Linkedin, Instagram, Loader
 } from 'lucide-react';
 
-// Mock data for demonstration
+// API Configuration
+const API_URL = 'https://igbe-news-backend.vercel.app/api'; // Replace with your actual backend URL
+
 const categories = [
   'Breaking News', 'Local News', 'Politics', 'Business', 
   'Sports', 'Entertainment', 'Technology', 'Opinion'
-];
-
-const mockArticles = [
-  {
-    id: 1,
-    title: 'New Infrastructure Project Announced for Ikorodu Division',
-    excerpt: 'Lagos State Government unveils ambitious plan to upgrade roads and facilities in Igbe Laara and surrounding communities...',
-    category: 'Local News',
-    author: 'Adewale Johnson',
-    date: '2 hours ago',
-    image: 'https://source.unsplash.com/800x600/?construction,road',
-    views: 1243,
-    comments: 28,
-    featured: true
-  },
-  {
-    id: 2,
-    title: 'Local Market Traders Protest Rising Costs',
-    excerpt: 'Traders at Igbe Laara market staged a peaceful protest today over increasing operational costs and taxation...',
-    category: 'Local News',
-    author: 'Ngozi Okafor',
-    date: '4 hours ago',
-    image: 'https://source.unsplash.com/800x600/?market,shopping',
-    views: 892,
-    comments: 45
-  },
-  {
-    id: 3,
-    title: 'Nigerian Tech Startup Raises $5M in Series A Funding',
-    excerpt: 'A Lagos-based fintech company secures major investment to expand operations across West Africa...',
-    category: 'Technology',
-    author: 'Chidi Eze',
-    date: '6 hours ago',
-    image: 'https://source.unsplash.com/800x600/?technology,startup',
-    views: 2156,
-    comments: 67
-  },
-  {
-    id: 4,
-    title: 'Super Eagles Qualify for AFCON 2025',
-    excerpt: 'Nigeria\'s national team secures qualification spot after dramatic victory against rivals...',
-    category: 'Sports',
-    author: 'Taiwo Adebayo',
-    date: '1 day ago',
-    image: 'https://source.unsplash.com/800x600/?soccer,football',
-    views: 3421,
-    comments: 134
-  },
-  {
-    id: 5,
-    title: 'New Policy on Small Business Taxation Announced',
-    excerpt: 'Federal Government introduces measures to support SMEs with revised tax framework...',
-    category: 'Business',
-    author: 'Fatima Bello',
-    date: '1 day ago',
-    image: 'https://source.unsplash.com/800x600/?business,office',
-    views: 1876,
-    comments: 56
-  },
-  {
-    id: 6,
-    title: 'Entertainment Industry Veterans Call for Better Regulation',
-    excerpt: 'Leading figures in Nollywood and music industry advocate for stronger copyright protection...',
-    category: 'Entertainment',
-    author: 'Kunle Afolayan',
-    date: '2 days ago',
-    image: 'https://source.unsplash.com/800x600/?music,entertainment',
-    views: 1654,
-    comments: 89
-  }
-];
-
-const trendingTopics = [
-  'Lagos Traffic Solutions',
-  'Election Updates',
-  'ASUU Strike',
-  'Fuel Subsidy',
-  'Naira Exchange Rate'
 ];
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [articles, setArticles] = useState(mockArticles);
+  const [articles, setArticles] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
   const [currentView, setCurrentView] = useState('home');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [trendingTopics, setTrendingTopics] = useState([]);
+
+  // Fetch articles from API
+  useEffect(() => {
+    fetchArticles();
+    fetchTrending();
+  }, [activeCategory, searchQuery]);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (activeCategory !== 'All') params.append('category', activeCategory);
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`${API_URL}/articles?${params}`);
+      if (!response.ok) throw new Error('Failed to fetch articles');
+      
+      const data = await response.json();
+      setArticles(data);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching articles:', err);
+      // Fallback to mock data if API fails
+      setArticles(getMockArticles());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTrending = async () => {
+    try {
+      const response = await fetch(`${API_URL}/trending`);
+      if (response.ok) {
+        const data = await response.json();
+        setTrendingTopics(data.map(item => item.title));
+      }
+    } catch (err) {
+      console.error('Error fetching trending:', err);
+      setTrendingTopics([
+        'Lagos Traffic Solutions',
+        'Election Updates',
+        'ASUU Strike',
+        'Fuel Subsidy',
+        'Naira Exchange Rate'
+      ]);
+    }
+  };
+
+  const getMockArticles = () => [
+    {
+      _id: '1',
+      title: 'New Infrastructure Project Announced for Ikorodu Division',
+      excerpt: 'Lagos State Government unveils ambitious plan to upgrade roads and facilities in Igbe Laara and surrounding communities...',
+      category: 'Local News',
+      author: 'Adewale Johnson',
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&auto=format&fit=crop',
+      views: 1243,
+      comments: 28,
+      featured: true
+    },
+    {
+      _id: '2',
+      title: 'Local Market Traders Protest Rising Costs',
+      excerpt: 'Traders at Igbe Laara market staged a peaceful protest today over increasing operational costs and taxation...',
+      category: 'Local News',
+      author: 'Ngozi Okafor',
+      createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop',
+      views: 892,
+      comments: 45
+    },
+    {
+      _id: '3',
+      title: 'Nigerian Tech Startup Raises $5M in Series A Funding',
+      excerpt: 'A Lagos-based fintech company secures major investment to expand operations across West Africa...',
+      category: 'Technology',
+      author: 'Chidi Eze',
+      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop',
+      views: 2156,
+      comments: 67
+    },
+    {
+      _id: '4',
+      title: 'Super Eagles Qualify for AFCON 2025',
+      excerpt: 'Nigeria\'s national team secures qualification spot after dramatic victory against rivals...',
+      category: 'Sports',
+      author: 'Taiwo Adebayo',
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&auto=format&fit=crop',
+      views: 3421,
+      comments: 134
+    },
+    {
+      _id: '5',
+      title: 'New Policy on Small Business Taxation Announced',
+      excerpt: 'Federal Government introduces measures to support SMEs with revised tax framework...',
+      category: 'Business',
+      author: 'Fatima Bello',
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop',
+      views: 1876,
+      comments: 56
+    },
+    {
+      _id: '6',
+      title: 'Entertainment Industry Veterans Call for Better Regulation',
+      excerpt: 'Leading figures in Nollywood and music industry advocate for stronger copyright protection...',
+      category: 'Entertainment',
+      author: 'Kunle Afolayan',
+      createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
+      image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&auto=format&fit=crop',
+      views: 1654,
+      comments: 89
+    }
+  ];
 
   const toggleSave = (articleId) => {
     setSavedArticles(prev => 
@@ -118,12 +163,26 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const formatDate = (date) => {
+    const now = new Date();
+    const articleDate = new Date(date);
+    const diffMs = now - articleDate;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffHours < 1) return 'Just now';
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return articleDate.toLocaleDateString();
+  };
+
   const filteredArticles = activeCategory === 'All' 
     ? articles 
     : articles.filter(a => a.category === activeCategory);
 
-  const featuredArticle = articles.find(a => a.featured);
-  const regularArticles = articles.filter(a => !a.featured);
+  const featuredArticle = filteredArticles.find(a => a.featured);
+  const regularArticles = filteredArticles.filter(a => !a.featured);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -183,10 +242,10 @@ function App() {
             </div>
 
             <button 
-              className="md:hidden"
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {menuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
             </button>
           </div>
         </div>
@@ -267,6 +326,18 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader className="w-8 h-8 text-green-600 animate-spin" />
+            <span className="ml-3 text-gray-600 font-medium">Loading articles...</span>
+          </div>
+        ) : error ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <p className="text-yellow-800 font-medium mb-2">Unable to connect to server</p>
+            <p className="text-sm text-yellow-600">Showing cached articles</p>
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Articles Column */}
           <div className="lg:col-span-2 space-y-8">
@@ -290,7 +361,7 @@ function App() {
                     <span className="text-green-600 font-semibold">{featuredArticle.category}</span>
                     <span>•</span>
                     <Clock className="w-4 h-4" />
-                    <span>{featuredArticle.date}</span>
+                    <span>{formatDate(featuredArticle.createdAt)}</span>
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">
                     {featuredArticle.title}
@@ -302,20 +373,20 @@ function App() {
                     <div className="flex items-center space-x-4 text-sm text-gray-600 font-medium">
                       <div className="flex items-center space-x-1.5">
                         <Eye className="w-4 h-4" />
-                        <span>{featuredArticle.views.toLocaleString()}</span>
+                        <span>{featuredArticle.views?.toLocaleString() || 0}</span>
                       </div>
                       <div className="flex items-center space-x-1.5">
                         <MessageSquare className="w-4 h-4" />
-                        <span>{featuredArticle.comments}</span>
+                        <span>{featuredArticle.comments || 0}</span>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button 
-                        onClick={() => toggleSave(featuredArticle.id)}
+                        onClick={() => toggleSave(featuredArticle._id)}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                       >
                         <Bookmark 
-                          className={`w-5 h-5 ${savedArticles.includes(featuredArticle.id) ? 'fill-green-600 text-green-600' : 'text-gray-600'}`} 
+                          className={`w-5 h-5 ${savedArticles.includes(featuredArticle._id) ? 'fill-green-600 text-green-600' : 'text-gray-600'}`} 
                         />
                       </button>
                       <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -334,7 +405,7 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {regularArticles.slice(0, 6).map(article => (
                 <article 
-                  key={article.id}
+                  key={article._id}
                   className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
                 >
                   <img 
@@ -347,7 +418,7 @@ function App() {
                       <span className="text-green-600 font-semibold">{article.category}</span>
                       <span>•</span>
                       <Clock className="w-3.5 h-3.5" />
-                      <span>{article.date}</span>
+                      <span>{formatDate(article.createdAt)}</span>
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight hover:text-green-600 transition-colors">
                       {article.title}
@@ -359,20 +430,20 @@ function App() {
                       <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-1">
                           <Eye className="w-3.5 h-3.5" />
-                          <span>{article.views.toLocaleString()}</span>
+                          <span>{article.views?.toLocaleString() || 0}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <MessageSquare className="w-3.5 h-3.5" />
-                          <span>{article.comments}</span>
+                          <span>{article.comments || 0}</span>
                         </div>
                       </div>
                       <div className="flex items-center space-x-1">
                         <button 
-                          onClick={() => toggleSave(article.id)}
+                          onClick={() => toggleSave(article._id)}
                           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
                         >
                           <Bookmark 
-                            className={`w-4 h-4 ${savedArticles.includes(article.id) ? 'fill-green-600 text-green-600' : ''}`} 
+                            className={`w-4 h-4 ${savedArticles.includes(article._id) ? 'fill-green-600 text-green-600' : ''}`} 
                           />
                         </button>
                         <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
@@ -429,7 +500,7 @@ function App() {
               <h3 className="text-lg font-bold text-gray-900 mb-5">Most Read</h3>
               <div className="space-y-4">
                 {articles.slice(0, 5).map((article, idx) => (
-                  <div key={article.id} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                  <div key={article._id} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                     <span className="text-2xl font-bold text-green-600 w-8 flex-shrink-0">{idx + 1}</span>
                     <div className="flex-1">
                       <h4 className="text-sm font-semibold text-gray-900 hover:text-green-600 cursor-pointer leading-tight mb-1.5">
@@ -437,7 +508,7 @@ function App() {
                       </h4>
                       <div className="flex items-center space-x-2 text-xs text-gray-600 font-medium">
                         <Eye className="w-3.5 h-3.5" />
-                        <span>{article.views.toLocaleString()} views</span>
+                        <span>{article.views?.toLocaleString() || 0} views</span>
                       </div>
                     </div>
                   </div>
