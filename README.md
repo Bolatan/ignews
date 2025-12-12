@@ -3,24 +3,26 @@
 News website for Igbe Laara, Lagos, Nigeria
 
 ## Structure
-- `/frontend` - React + Vite frontend
-- `/backend` - Express + MongoDB backend
+This is a monorepo managed with Turborepo.
+- `frontend` - React + Vite frontend
+- `backend` - Express + MongoDB backend
 
 ## Local Development
-
-### Frontend
+First, install the dependencies from the root of the project:
 ```bash
-cd frontend
 npm install
+```
+
+Then, you can run the development servers for both the frontend and backend concurrently:
+```bash
 npm run dev
 ```
 
-### Backend
+## Building for Production
+To build both the frontend and backend for production, run the following command from the root:
 ```bash
-cd backend
-npm install
-npm start
+npm run build
 ```
 
 ## Deployment
-Deploy frontend and backend separately to Vercel
+This project is configured for a single, unified deployment to Vercel. Push to your Vercel-connected repository to deploy.
