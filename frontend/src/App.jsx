@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { 
   Newspaper, Menu, X, Search, TrendingUp, Clock, 
   MessageSquare, Share2, Bookmark, User, Bell,
@@ -6,8 +7,16 @@ import {
   Facebook, Twitter, Linkedin, Instagram, Loader
 } from 'lucide-react';
 
+import Home from './components/Home';
+import About from './components/About';
+import Contact from './components/Contact';
+import Subscribe from './components/Subscribe';
+import Profile from './components/Profile';
+import Privacy from './components/Privacy';
+import Advertise from './components/Advertise';
+
 // API Configuration
-const API_URL = '/api'; // Use relative path for Vercel rewrites
+const API_URL = '/api';
 
 const categories = [
   'Breaking News', 'Local News', 'Politics', 'Business', 
@@ -20,10 +29,10 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [articles, setArticles] = useState([]);
   const [savedArticles, setSavedArticles] = useState([]);
-  const [currentView, setCurrentView] = useState('home');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [trendingTopics, setTrendingTopics] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch articles from API
   useEffect(() => {
@@ -97,50 +106,6 @@ function App() {
       views: 892,
       comments: 45
     },
-    {
-      _id: '3',
-      title: 'Nigerian Tech Startup Raises $5M in Series A Funding',
-      excerpt: 'A Lagos-based fintech company secures major investment to expand operations across West Africa...',
-      category: 'Technology',
-      author: 'Chidi Eze',
-      createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop',
-      views: 2156,
-      comments: 67
-    },
-    {
-      _id: '4',
-      title: 'Super Eagles Qualify for AFCON 2025',
-      excerpt: 'Nigeria\'s national team secures qualification spot after dramatic victory against rivals...',
-      category: 'Sports',
-      author: 'Taiwo Adebayo',
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&auto=format&fit=crop',
-      views: 3421,
-      comments: 134
-    },
-    {
-      _id: '5',
-      title: 'New Policy on Small Business Taxation Announced',
-      excerpt: 'Federal Government introduces measures to support SMEs with revised tax framework...',
-      category: 'Business',
-      author: 'Fatima Bello',
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop',
-      views: 1876,
-      comments: 56
-    },
-    {
-      _id: '6',
-      title: 'Entertainment Industry Veterans Call for Better Regulation',
-      excerpt: 'Leading figures in Nollywood and music industry advocate for stronger copyright protection...',
-      category: 'Entertainment',
-      author: 'Kunle Afolayan',
-      createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
-      image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&auto=format&fit=crop',
-      views: 1654,
-      comments: 89
-    }
   ];
 
   const toggleSave = (articleId) => {
@@ -153,13 +118,7 @@ function App() {
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
-    setCurrentView('home');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleNavigation = (view) => {
-    setCurrentView(view);
-    setMenuOpen(false);
+    navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -176,13 +135,6 @@ function App() {
     if (diffDays < 7) return `${diffDays} days ago`;
     return articleDate.toLocaleDateString();
   };
-
-  const filteredArticles = activeCategory === 'All' 
-    ? articles 
-    : articles.filter(a => a.category === activeCategory);
-
-  const featuredArticle = filteredArticles.find(a => a.featured);
-  const regularArticles = filteredArticles.filter(a => !a.featured);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,16 +154,13 @@ function App() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <button 
-              onClick={() => handleNavigation('home')}
-              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-            >
+            <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
               <Newspaper className="w-9 h-9 text-green-600" strokeWidth={2.5} />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Igbe Laara News</h1>
                 <p className="text-xs text-gray-600 font-medium">Lagos, Nigeria</p>
               </div>
-            </button>
+            </Link>
             
             <div className="hidden md:flex items-center space-x-6">
               <div className="relative">
@@ -227,18 +176,12 @@ function App() {
               <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <Bell className="w-5 h-5 text-gray-600" />
               </button>
-              <button 
-                onClick={() => handleNavigation('subscribe')}
-                className="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"
-              >
+              <Link to="/subscribe" className="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm">
                 Subscribe
-              </button>
-              <button 
-                onClick={() => handleNavigation('profile')}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
+              </Link>
+              <Link to="/profile" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <User className="w-5 h-5 text-gray-600" />
-              </button>
+              </Link>
             </div>
 
             <button 
@@ -296,19 +239,13 @@ function App() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button 
-              onClick={() => handleNavigation('subscribe')}
-              className="w-full px-4 py-2.5 bg-green-600 text-white rounded-lg font-semibold"
-            >
+            <Link to="/subscribe" onClick={() => setMenuOpen(false)} className="block w-full text-center px-4 py-2.5 bg-green-600 text-white rounded-lg font-semibold">
               Subscribe
-            </button>
-            <button 
-              onClick={() => handleNavigation('profile')}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg flex items-center justify-center space-x-2 font-semibold"
-            >
+            </Link>
+            <Link to="/profile" onClick={() => setMenuOpen(false)} className="w-full px-4 py-2.5 border border-gray-300 rounded-lg flex items-center justify-center space-x-2 font-semibold">
               <User className="w-5 h-5" />
               <span>Sign In</span>
-            </button>
+            </Link>
           </div>
         </div>
       )}
@@ -324,200 +261,30 @@ function App() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader className="w-8 h-8 text-green-600 animate-spin" />
-            <span className="ml-3 text-gray-600 font-medium">Loading articles...</span>
-          </div>
-        ) : error ? (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <p className="text-yellow-800 font-medium mb-2">Unable to connect to server</p>
-            <p className="text-sm text-yellow-600">Showing cached articles</p>
-          </div>
-        ) : null}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Articles Column */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Featured Article */}
-            {featuredArticle && (
-              <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="relative h-96">
-                  <img 
-                    src={featuredArticle.image} 
-                    alt={featuredArticle.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-green-600 text-white px-3 py-1.5 rounded-full text-xs font-bold tracking-wide">
-                      FEATURED
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3 font-medium">
-                    <span className="text-green-600 font-semibold">{featuredArticle.category}</span>
-                    <span>•</span>
-                    <Clock className="w-4 h-4" />
-                    <span>{formatDate(featuredArticle.createdAt)}</span>
-                  </div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-3 leading-tight">
-                    {featuredArticle.title}
-                  </h2>
-                  <p className="text-gray-700 mb-4 leading-relaxed">
-                    {featuredArticle.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 font-medium">
-                      <div className="flex items-center space-x-1.5">
-                        <Eye className="w-4 h-4" />
-                        <span>{featuredArticle.views?.toLocaleString() || 0}</span>
-                      </div>
-                      <div className="flex items-center space-x-1.5">
-                        <MessageSquare className="w-4 h-4" />
-                        <span>{featuredArticle.comments || 0}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button 
-                        onClick={() => toggleSave(featuredArticle._id)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                      >
-                        <Bookmark 
-                          className={`w-5 h-5 ${savedArticles.includes(featuredArticle._id) ? 'fill-green-600 text-green-600' : 'text-gray-600'}`} 
-                        />
-                      </button>
-                      <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <Share2 className="w-5 h-5 text-gray-600" />
-                      </button>
-                      <button className="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm">
-                        Read More
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            )}
-
-            {/* Regular Articles Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {regularArticles.slice(0, 6).map(article => (
-                <article 
-                  key={article._id}
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
-                >
-                  <img 
-                    src={article.image} 
-                    alt={article.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-5">
-                    <div className="flex items-center space-x-2 text-xs text-gray-600 mb-2.5 font-medium">
-                      <span className="text-green-600 font-semibold">{article.category}</span>
-                      <span>•</span>
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{formatDate(article.createdAt)}</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight hover:text-green-600 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-gray-700 mb-3 leading-relaxed">
-                      {article.excerpt.substring(0, 100)}...
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center space-x-1">
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>{article.views?.toLocaleString() || 0}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <MessageSquare className="w-3.5 h-3.5" />
-                          <span>{article.comments || 0}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <button 
-                          onClick={() => toggleSave(article._id)}
-                          className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-                        >
-                          <Bookmark 
-                            className={`w-4 h-4 ${savedArticles.includes(article._id) ? 'fill-green-600 text-green-600' : ''}`} 
-                          />
-                        </button>
-                        <button className="p-1.5 hover:bg-gray-100 rounded transition-colors">
-                          <Share2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Trending Topics */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-green-600" strokeWidth={2.5} />
-                <span>Trending Topics</span>
-              </h3>
-              <div className="space-y-2">
-                {trendingTopics.map((topic, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setSearchQuery(topic)}
-                    className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors text-left"
-                  >
-                    <span className="text-sm font-semibold text-gray-900">{topic}</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Newsletter Signup */}
-            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl shadow-md p-6 text-white">
-              <h3 className="text-xl font-bold mb-2">Daily Newsletter</h3>
-              <p className="text-sm mb-4 text-green-100 font-medium">
-                Get the latest news delivered to your inbox every morning
-              </p>
-              <input 
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-2.5 rounded-lg text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-green-300 text-sm"
-              />
-              <button className="w-full px-4 py-2.5 bg-white text-green-600 rounded-lg font-bold hover:bg-gray-100 transition-colors text-sm">
-                Subscribe Now
-              </button>
-            </div>
-
-            {/* Popular Articles */}
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-5">Most Read</h3>
-              <div className="space-y-4">
-                {articles.slice(0, 5).map((article, idx) => (
-                  <div key={article._id} className="flex items-start space-x-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                    <span className="text-2xl font-bold text-green-600 w-8 flex-shrink-0">{idx + 1}</span>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-gray-900 hover:text-green-600 cursor-pointer leading-tight mb-1.5">
-                        {article.title}
-                      </h4>
-                      <div className="flex items-center space-x-2 text-xs text-gray-600 font-medium">
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>{article.views?.toLocaleString() || 0} views</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Home
+              loading={loading}
+              error={error}
+              articles={articles}
+              savedArticles={savedArticles}
+              toggleSave={toggleSave}
+              formatDate={formatDate}
+              trendingTopics={trendingTopics}
+              setSearchQuery={setSearchQuery}
+              activeCategory={activeCategory}
+            />
+          }
+        />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/subscribe" element={<Subscribe />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/advertise" element={<Advertise />} />
+      </Routes>
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white mt-16">
@@ -541,36 +308,16 @@ function App() {
               <h4 className="font-bold mb-4 text-base">Categories</h4>
               <ul className="space-y-2.5 text-sm text-gray-400 font-medium">
                 <li>
-                  <button 
-                    onClick={() => handleCategoryClick('Local News')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Local News
-                  </button>
+                  <button onClick={() => handleCategoryClick('Local News')} className="hover:text-green-500 transition-colors">Local News</button>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => handleCategoryClick('Politics')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Politics
-                  </button>
+                  <button onClick={() => handleCategoryClick('Politics')} className="hover:text-green-500 transition-colors">Politics</button>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => handleCategoryClick('Business')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Business
-                  </button>
+                  <button onClick={() => handleCategoryClick('Business')} className="hover:text-green-500 transition-colors">Business</button>
                 </li>
                 <li>
-                  <button 
-                    onClick={() => handleCategoryClick('Sports')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Sports
-                  </button>
+                  <button onClick={() => handleCategoryClick('Sports')} className="hover:text-green-500 transition-colors">Sports</button>
                 </li>
               </ul>
             </div>
@@ -578,38 +325,10 @@ function App() {
             <div>
               <h4 className="font-bold mb-4 text-base">About</h4>
               <ul className="space-y-2.5 text-sm text-gray-400 font-medium">
-                <li>
-                  <button 
-                    onClick={() => handleNavigation('about')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    About Us
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleNavigation('contact')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Contact
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleNavigation('advertise')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Advertise
-                  </button>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => handleNavigation('privacy')}
-                    className="hover:text-green-500 transition-colors"
-                  >
-                    Privacy Policy
-                  </button>
-                </li>
+                <li><Link to="/about" className="hover:text-green-500 transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="hover:text-green-500 transition-colors">Contact</Link></li>
+                <li><Link to="/advertise" className="hover:text-green-500 transition-colors">Advertise</Link></li>
+                <li><Link to="/privacy" className="hover:text-green-500 transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
             
