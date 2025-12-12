@@ -16,13 +16,12 @@
   ],
   "rewrites": [
     {
-      // 1. API REWRITE: Routes all requests starting with /api to the backend serverless function
+   
       "source": "/api/(.*)",
       "destination": "/backend/server.js"
     },
     {
-      // 2. SPA FALLBACK: Routes all remaining requests to the index.html file
-      // This is the common, reliable catch-all for React Router to handle client-side routing.
+      
       "source": "/(.*)",
       "destination": "/index.html"
     }
