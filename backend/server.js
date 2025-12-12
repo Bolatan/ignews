@@ -16,34 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
-let isDbConnected = false;
-
-const connectToDb = async () => {
-  if (!process.env.MONGODB_URI) {
-    console.warn('❌ MONGODB_URI is not defined. Skipping database connection.');
-    return;
-  }
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ MongoDB Connected Successfully');
-    isDbConnected = true;
-  } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err.message);
-    isDbConnected = false;
-    // We don't re-throw the error here to allow the server to start.
-  }
-};
-
-// Database availability middleware
-const checkDbConnection = (req, res, next) => {
-  if (isDbConnected) {
-    return next();
-  }
-  res.status(503).json({
-    error: 'Service Unavailable: Database connection is not established.'
-  });
-};
-
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Connected Successfully'))
+  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
 
 // Models
 const articleSchema = new mongoose.Schema({
@@ -66,7 +41,6 @@ app.get('/', (req, res) => {
   res.json({ 
     message: 'Igbe Laara News API', 
     status: 'running',
-    dbConnected: isDbConnected,
     endpoints: {
       articles: '/api/articles',
       trending: '/api/trending',
@@ -76,11 +50,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api', (req, res) => {
-  res.json({ message: 'API is working', status: 'ok', dbConnected: isDbConnected });
+  res.json({ message: 'API is working', status: 'ok' });
 });
 
-// All routes that require a DB connection should use the middleware
-app.get('/api/articles', checkDbConnection, async (req, res) => {
+// Get all articles
+app.get('/api/articles', async (req, res) => {
   try {
     const { category, search, limit = 20 } = req.query;
     let query = {};
@@ -107,7 +81,8 @@ app.get('/api/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/api/articles/:id', checkDbConnection, async (req, res) => {
+// Get single article
+app.get('/api/articles/:id', async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
@@ -123,7 +98,8 @@ app.get('/api/articles/:id', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/api/articles', checkDbConnection, async (req, res) => {
+// Create article
+app.post('/api/articles', async (req, res) => {
   try {
     const article = new Article(req.body);
     await article.save();
@@ -133,7 +109,8 @@ app.post('/api/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/api/trending', checkDbConnection, async (req, res) => {
+// Get trending
+app.get('/api/trending', async (req, res) => {
   try {
     const trending = await Article.find()
       .sort({ views: -1 })
@@ -145,7 +122,8 @@ app.get('/api/trending', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/api/seed', checkDbConnection, async (req, res) => {
+// Seed database
+app.post('/api/seed', async (req, res) => {
   try {
     const count = await Article.countDocuments();
     if (count > 0) {
@@ -153,7 +131,37 @@ app.post('/api/seed', checkDbConnection, async (req, res) => {
     }
     
     const articles = [
-      // Mock data...
+      {
+        title: 'New Infrastructure Project Announced for Ikorodu Division',
+        excerpt: 'Lagos State Government unveils ambitious plan to upgrade roads and facilities in Igbe Laara and surrounding communities...',
+        content: 'Full article content...',
+        category: 'Local News',
+        author: 'Adewale Johnson',
+        image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&auto=format&fit=crop',
+        views: 1243,
+        comments: 28,
+        featured: true
+      },
+      {
+        title: 'Local Market Traders Protest Rising Costs',
+        excerpt: 'Traders at Igbe Laara market staged a peaceful protest today...',
+        content: 'Full article content...',
+        category: 'Local News',
+        author: 'Ngozi Okafor',
+        image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&auto=format&fit=crop',
+        views: 892,
+        comments: 45
+      },
+      {
+        title: 'Nigerian Tech Startup Raises $5M in Series A Funding',
+        excerpt: 'A Lagos-based fintech company secures major investment...',
+        content: 'Full article content...',
+        category: 'Technology',
+        author: 'Chidi Eze',
+        image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop',
+        views: 2156,
+        comments: 67
+      }
     ];
     
     await Article.insertMany(articles);
@@ -164,10 +172,6 @@ app.post('/api/seed', checkDbConnection, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
-// Connect to DB and then start the server
-connectToDb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
