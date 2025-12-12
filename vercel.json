@@ -20,8 +20,8 @@
       "destination": "/backend/server.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/frontend/dist/index.html"
+      "source": "/((?!api/).*)",
+      "destination": "/dist/index.html"
     }
   ]
 }
