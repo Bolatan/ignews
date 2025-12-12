@@ -3,17 +3,7 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "env": [
-        "VERCEL_URL",
-        "MONGODB_URI",
-        "FRONTEND_URL"
-      ],
-      "globalEnv": [
-        "VERCEL_URL",
-        "MONGODB_URI",
-        "FRONTEND_URL"
-      ]
+      "outputs": ["dist/**"]
     },
     "dev": {
       "cache": false,
