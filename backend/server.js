@@ -163,11 +163,7 @@ app.post('/api/seed', checkDbConnection, async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
+// Connect to DB for serverless environment
+connectToDb();
 
-// Connect to DB and then start the server
-connectToDb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
-});
+export default app;
