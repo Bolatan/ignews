@@ -14,6 +14,7 @@ import Subscribe from './components/Subscribe';
 import Profile from './components/Profile';
 import Privacy from './components/Privacy';
 import Advertise from './components/Advertise';
+import NotFound from './components/NotFound';
 
 // API Configuration
 const API_URL = '/api';
@@ -284,6 +285,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/advertise" element={<Advertise />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       {/* Footer */}
