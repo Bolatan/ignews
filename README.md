@@ -24,7 +24,7 @@ npm start
 
 ### Environment Variables
 
-The backend requires environment variables to run. Copy the example file and update it with your configuration.
+The backend requires environment variables to run. For local development, copy the example file and update it with your configuration.
 
 ```bash
 cd backend
@@ -38,5 +38,19 @@ The following variables need to be set in the `.env` file:
 - `PORT`: The port the backend server will run on. Defaults to `5000`.
 
 
-## Deployment
-Deploy frontend and backend separately to Vercel
+## Deployment on Vercel
+
+This project is configured as a monorepo for Vercel.
+
+### Environment Variables on Vercel
+
+When deploying to Vercel, you need to set the same environment variables in your Vercel project settings.
+
+1.  Go to your project on Vercel.
+2.  Navigate to the **Settings** tab.
+3.  Click on **Environment Variables**.
+4.  Add the following variables:
+    *   `MONGODB_URI`: Your production MongoDB connection string.
+    *   `FRONTEND_URL`: The URL of your deployed frontend application.
+
+The `PORT` variable is automatically managed by Vercel, so you do not need to set it.
