@@ -2,15 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
-    },
-    {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
         "rootDirectory": "frontend"
       }
+    },
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [
@@ -20,7 +20,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "frontend/dist/index.html"
+      "destination": "/index.html"
     }
   ]
 }
