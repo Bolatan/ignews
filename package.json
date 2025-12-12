@@ -12,6 +12,6 @@
     "backend"
   ],
   "devDependencies": {
-    "turbo": "latest"
+    "turbo": "^2.6.3"
   }
 }
