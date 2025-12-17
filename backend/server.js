@@ -62,25 +62,24 @@ const articleSchema = new mongoose.Schema({
 const Article = mongoose.model('Article', articleSchema);
 
 // Routes
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ 
     message: 'Igbe Laara News API', 
     status: 'running',
     dbConnected: isDbConnected,
     endpoints: {
       articles: '/api/articles',
-      trending: '/api/trending',
-      seed: '/api/seed (POST)'
+      trending: '/api/trending'
     }
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({ message: 'API is working', status: 'ok', dbConnected: isDbConnected });
 });
 
 // All routes that require a DB connection should use the middleware
-app.get('/articles', checkDbConnection, async (req, res) => {
+app.get('/api/articles', checkDbConnection, async (req, res) => {
   try {
     const { category, search, limit = 20 } = req.query;
     let query = {};
@@ -107,7 +106,7 @@ app.get('/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/articles/:id', checkDbConnection, async (req, res) => {
+app.get('/api/articles/:id', checkDbConnection, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
@@ -123,7 +122,7 @@ app.get('/articles/:id', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/articles', checkDbConnection, async (req, res) => {
+app.post('/api/articles', checkDbConnection, async (req, res) => {
   try {
     const article = new Article(req.body);
     await article.save();
@@ -133,7 +132,7 @@ app.post('/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/trending', checkDbConnection, async (req, res) => {
+app.get('/api/trending', checkDbConnection, async (req, res) => {
   try {
     const trending = await Article.find()
       .sort({ views: -1 })
@@ -145,23 +144,6 @@ app.get('/trending', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/seed', checkDbConnection, async (req, res) => {
-  try {
-    const count = await Article.countDocuments();
-    if (count > 0) {
-      return res.json({ message: 'Database already has articles', count });
-    }
-    
-    const articles = [
-      // Mock data...
-    ];
-    
-    await Article.insertMany(articles);
-    res.json({ message: 'Database seeded successfully', count: articles.length });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Connect to DB for serverless environment
 connectToDb();
