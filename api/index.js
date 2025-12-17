@@ -71,8 +71,8 @@ app.get('/', (req, res) => {
     status: 'running',
     dbConnected: isDbConnected,
     endpoints: {
-      articles: '/api/articles',
-      trending: '/api/trending'
+      articles: '/articles',
+      trending: '/trending'
     }
   });
 });
@@ -145,7 +145,7 @@ apiRouter.get('/trending', checkDbConnection, async (req, res) => {
 
 
 // Mount the API router
-app.use('/api', apiRouter);
+app.use(apiRouter);
 
 // Connect to DB for serverless environment
 connectToDb();
