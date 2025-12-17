@@ -7,19 +7,21 @@ let isDbConnected = false;
 
 export const connectToDb = async () => {
   if (isDbConnected) {
-    return;
+    return true;
   }
   if (!process.env.MONGODB_URI) {
     console.warn('❌ MONGODB_URI is not defined. Skipping database connection.');
-    return;
+    return false;
   }
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ MongoDB Connected Successfully');
     isDbConnected = true;
+    return true;
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
     isDbConnected = false;
+    return false;
   }
 };
 
