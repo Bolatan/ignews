@@ -68,8 +68,8 @@ app.get('/', (req, res) => {
     status: 'running',
     dbConnected: isDbConnected,
     endpoints: {
-      articles: '/api/articles',
-      trending: '/api/trending'
+      articles: '/articles',
+      trending: '/trending'
     }
   });
 });
@@ -79,7 +79,7 @@ app.get('/api', (req, res) => {
 });
 
 // All routes that require a DB connection should use the middleware
-app.get('/api/articles', checkDbConnection, async (req, res) => {
+app.get('/articles', checkDbConnection, async (req, res) => {
   try {
     const { category, search, limit = 20 } = req.query;
     let query = {};
@@ -106,7 +106,7 @@ app.get('/api/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/api/articles/:id', checkDbConnection, async (req, res) => {
+app.get('/articles/:id', checkDbConnection, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
@@ -122,7 +122,7 @@ app.get('/api/articles/:id', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/api/articles', checkDbConnection, async (req, res) => {
+app.post('/articles', checkDbConnection, async (req, res) => {
   try {
     const article = new Article(req.body);
     await article.save();
@@ -132,7 +132,7 @@ app.post('/api/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/api/trending', checkDbConnection, async (req, res) => {
+app.get('/trending', checkDbConnection, async (req, res) => {
   try {
     const trending = await Article.find()
       .sort({ views: -1 })
