@@ -9,7 +9,7 @@
   },
   "workspaces": [
     "frontend",
-    "backend"
+    "api"
   ],
   "devDependencies": {
     "turbo": "^2.6.3"
