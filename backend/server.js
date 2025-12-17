@@ -62,24 +62,23 @@ const articleSchema = new mongoose.Schema({
 const Article = mongoose.model('Article', articleSchema);
 
 // Routes
+
+const apiRouter = express.Router();
+
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Igbe Laara News API', 
     status: 'running',
     dbConnected: isDbConnected,
     endpoints: {
-      articles: '/articles',
-      trending: '/trending'
+      articles: '/api/articles',
+      trending: '/api/trending'
     }
   });
 });
 
-app.get('/api', (req, res) => {
-  res.json({ message: 'API is working', status: 'ok', dbConnected: isDbConnected });
-});
-
 // All routes that require a DB connection should use the middleware
-app.get('/articles', checkDbConnection, async (req, res) => {
+apiRouter.get('/articles', checkDbConnection, async (req, res) => {
   try {
     const { category, search, limit = 20 } = req.query;
     let query = {};
@@ -106,7 +105,7 @@ app.get('/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/articles/:id', checkDbConnection, async (req, res) => {
+apiRouter.get('/articles/:id', checkDbConnection, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
@@ -122,7 +121,7 @@ app.get('/articles/:id', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/articles', checkDbConnection, async (req, res) => {
+apiRouter.post('/articles', checkDbConnection, async (req, res) => {
   try {
     const article = new Article(req.body);
     await article.save();
@@ -132,7 +131,7 @@ app.post('/articles', checkDbConnection, async (req, res) => {
   }
 });
 
-app.get('/trending', checkDbConnection, async (req, res) => {
+apiRouter.get('/trending', checkDbConnection, async (req, res) => {
   try {
     const trending = await Article.find()
       .sort({ views: -1 })
@@ -144,6 +143,9 @@ app.get('/trending', checkDbConnection, async (req, res) => {
   }
 });
 
+
+// Mount the API router
+app.use('/api', apiRouter);
 
 // Connect to DB for serverless environment
 connectToDb();
