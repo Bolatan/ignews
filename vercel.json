@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "igbe-laara-news",
   "builds": [
     {
       "src": "frontend/package.json",
@@ -20,7 +21,7 @@
     },
     {
       "source": "/((?!api/|assets/).*)",
-      "destination": "/index.html"
+      "destination": "frontend/index.html"
     }
   ]
 }
