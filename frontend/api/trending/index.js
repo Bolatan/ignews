@@ -1,7 +1,10 @@
 import { connectToDb, Article } from '../lib/mongodb';
 
 export default async function handler(req, res) {
-  await connectToDb();
+  const isConnected = await connectToDb();
+  if (!isConnected) {
+    return res.status(503).json({ error: 'Service Unavailable: Could not connect to the database.' });
+  }
 
   try {
     const trending = await Article.find()

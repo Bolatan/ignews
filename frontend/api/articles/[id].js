@@ -3,7 +3,10 @@ import { connectToDb, Article } from '../lib/mongodb';
 export default async function handler(req, res) {
   const { id } = req.query;
 
-  await connectToDb();
+  const isConnected = await connectToDb();
+  if (!isConnected) {
+    return res.status(503).json({ error: 'Service Unavailable: Could not connect to the database.' });
+  }
 
   if (req.method === 'GET') {
     try {
