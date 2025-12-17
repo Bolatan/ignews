@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
+  "globalEnv": ["MONGODB_URI", "FRONTEND_URL", "PORT"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
