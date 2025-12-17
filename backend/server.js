@@ -69,8 +69,7 @@ app.get('/', (req, res) => {
     dbConnected: isDbConnected,
     endpoints: {
       articles: '/api/articles',
-      trending: '/api/trending',
-      seed: '/api/seed (POST)'
+      trending: '/api/trending'
     }
   });
 });
@@ -145,23 +144,6 @@ app.get('/api/trending', checkDbConnection, async (req, res) => {
   }
 });
 
-app.post('/api/seed', checkDbConnection, async (req, res) => {
-  try {
-    const count = await Article.countDocuments();
-    if (count > 0) {
-      return res.json({ message: 'Database already has articles', count });
-    }
-    
-    const articles = [
-      // Mock data...
-    ];
-    
-    await Article.insertMany(articles);
-    res.json({ message: 'Database seeded successfully', count: articles.length });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Connect to DB for serverless environment
 connectToDb();
