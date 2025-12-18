@@ -1,6 +1,7 @@
 import { connectToDb, Article } from '../lib/mongodb';
+import { verifyToken } from '../lib/auth';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const { id } = req.query;
 
   const isConnected = await connectToDb();
@@ -56,3 +57,10 @@ export default async function handler(req, res) {
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
+
+export default (req, res) => {
+  if (req.method === 'PUT' || req.method === 'DELETE') {
+    return verifyToken(handler)(req, res);
+  }
+  return handler(req, res);
+};

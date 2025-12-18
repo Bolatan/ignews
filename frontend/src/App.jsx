@@ -15,6 +15,12 @@ import Profile from './components/Profile';
 import Privacy from './components/Privacy';
 import Advertise from './components/Advertise';
 import NotFound from './components/NotFound';
+import AdminLayout from './components/admin/AdminLayout';
+import Dashboard from './components/admin/Dashboard';
+import ArticleList from './components/admin/ArticleList';
+import ArticleForm from './components/admin/ArticleForm';
+import Login from './components/admin/Login';
+import ProtectedRoute from './components/admin/ProtectedRoute';
 
 // API Configuration
 const API_URL = '/api';
@@ -286,6 +292,17 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/advertise" element={<Advertise />} />
         <Route path="*" element={<NotFound />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin" element={<ProtectedRoute />}>
+          <Route path="" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="articles" element={<ArticleList />} />
+            <Route path="articles/new" element={<ArticleForm />} />
+            <Route path="articles/edit/:id" element={<ArticleForm />} />
+          </Route>
+        </Route>
       </Routes>
 
       {/* Footer */}
@@ -331,6 +348,7 @@ function App() {
                 <li><Link to="/contact" className="hover:text-green-500 transition-colors">Contact</Link></li>
                 <li><Link to="/advertise" className="hover:text-green-500 transition-colors">Advertise</Link></li>
                 <li><Link to="/privacy" className="hover:text-green-500 transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/admin" className="hover:text-green-500 transition-colors">Admin</Link></li>
               </ul>
             </div>
             
