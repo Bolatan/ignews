@@ -1,5 +1,5 @@
-import { connectToDb, Article } from '../lib/mongodb.js';
-import { verifyToken } from '../lib/auth.js';
+import { connectToDb, Article } from '../../lib/mongodb.js';
+import { verifyToken } from '../../lib/auth.js';
 
 async function handler(req, res) {
   const isConnected = await connectToDb();
