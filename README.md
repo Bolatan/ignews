@@ -26,3 +26,15 @@ npm run build
 
 ## Deployment
 This project is configured for a single, unified deployment to Vercel. Push to your Vercel-connected repository to deploy.
+
+## Admin Account
+To set up the admin account, you will need to create a `.env` file in the `frontend` directory and add the following environment variables. For production, these should be set in your Vercel project settings.
+
+```
+# .env file for local development
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=secure_password_123
+JWT_SECRET=aeed09dfb7d3ceebe89879a5c80b9d20774c2186e3ddfc2c3a8e97bb96810f9c
+```
+
+You can then log in by navigating to `/admin/login` and using the credentials you have set.
