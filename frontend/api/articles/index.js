@@ -1,6 +1,7 @@
 import { connectToDb, Article } from '../lib/mongodb.js';
+import { verifyToken } from '../lib/auth.js';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const isConnected = await connectToDb();
   if (!isConnected) {
     return res.status(503).json({ error: 'Service Unavailable: Could not connect to the database.' });
@@ -44,3 +45,10 @@ export default async function handler(req, res) {
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
+
+export default (req, res) => {
+  if (req.method === 'POST') {
+    return verifyToken(handler)(req, res);
+  }
+  return handler(req, res);
+};
