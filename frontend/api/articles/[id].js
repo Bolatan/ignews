@@ -1,5 +1,5 @@
-import { connectToDb, Article } from '../lib/mongodb';
-import { verifyToken } from '../lib/auth';
+import { connectToDb, Article } from '../../lib/mongodb';
+import { verifyToken } from '../../lib/auth';
 
 async function handler(req, res) {
   const { id } = req.query;
