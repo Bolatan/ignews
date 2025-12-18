@@ -1,19 +1,4 @@
 {
   "version": 2,
-  "name": "igbe-laara-news",
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/((?!api/|.*\\..*).*)",
-      "destination": "/index.html"
-    }
-  ]
+  "name": "igbe-laara-news"
 }
