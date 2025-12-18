@@ -66,7 +66,7 @@ const Home = ({
                     {featuredArticle.title}
                   </h2>
                   <p className="text-gray-700 mb-4 leading-relaxed">
-                    {featuredArticle.excerpt}
+                    {featuredArticle.excerpt && featuredArticle.excerpt}
                   </p>
                   <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                     <div className="flex items-center space-x-4 text-sm text-gray-600 font-medium">
@@ -123,7 +123,7 @@ const Home = ({
                       {article.title}
                     </h3>
                     <p className="text-sm text-gray-700 mb-3 leading-relaxed">
-                      {article.excerpt.substring(0, 100)}...
+                      {article.excerpt && `${article.excerpt.substring(0, 100)}...`}
                     </p>
                     <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
                       <div className="flex items-center space-x-3">
