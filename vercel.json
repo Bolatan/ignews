@@ -1,4 +1,10 @@
 {
   "version": 2,
-  "name": "igbe-laara-news"
+  "name": "igbe-laara-news",
+  "rewrites": [
+    {
+      "source": "/((?!api/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
