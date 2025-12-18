@@ -1,4 +1,4 @@
-import { connectToDb, Article } from '../lib/mongodb';
+import { connectToDb, Article } from '../lib/mongodb.js';
 
 export default async function handler(req, res) {
   const isConnected = await connectToDb();
