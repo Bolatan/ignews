@@ -1,10 +1,28 @@
 {
   "version": 2,
-  "name": "igbe-laara-news",
-  "rewrites": [
+  "buildCommand": "turbo run build",
+  "outputDirectory": "frontend/dist",
+  "builds": [
     {
-      "source": "/((?!api/|.*\\..*).*)",
-      "destination": "/index.html"
+      "src": "frontend/api/**/*.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/frontend/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "dest": "/frontend/dist/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/index.html"
     }
   ]
 }
